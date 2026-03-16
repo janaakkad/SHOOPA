@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SHOOPA — Jiu-Jitsu · Chess · Mind & Body</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,700;0,900;1,900&family=Barlow:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:   #050c1a;
+  --navy2:  #091223;
+  --navy3:  #0d1b33;
+  --blue:   #1a6ef5;
+  --blue2:  #2a8fff;
+  --cyan:   #00c8ff;
+  --purple: #7b5ea7;
+  --white:  #e8f0ff;
+  --dim:    rgba(232,240,255,0.55);
+  --dimmer: rgba(232,240,255,0.25);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--navy);
+  color: var(--white);
+  font-family: 'Barlow', sans-serif;
+  overflow-x: hidden;
+}
+
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 9999; opacity: 0.5;
+}
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 24px 64px;
+  background: linear-gradient(to bottom, rgba(5,12,26,0.96), transparent);
+}
+.nav-logo {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 28px;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--white);
+}
+.nav-logo span { color: var(--cyan); }
+.nav-links { display: flex; gap: 40px; list-style: none; }
+.nav-links a {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--dim);
+  text-decoration: none; transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--cyan); }
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  display: flex; align-items: center;
+  position: relative; overflow: hidden;
+  padding: 140px 64px 100px;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  width: 900px; height: 900px; border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(26,110,245,0.15) 0%, transparent 70%);
+  top: -200px; right: -100px;
+  animation: pulse 7s ease-in-out infinite;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  width: 600px; height: 600px; border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(123,94,167,0.1) 0%, transparent 70%);
+  bottom: -100px; left: 100px;
+  animation: pulse 9s 2s ease-in-out infinite;
+}
+.hero-inner {
+  max-width: 1300px; margin: 0 auto; width: 100%;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 60px; align-items: center;
+  position: relative; z-index: 2;
+}
+.hero-eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px; letter-spacing: 0.3em;
+  text-transform: uppercase; color: var(--cyan);
+  margin-bottom: 28px;
+  opacity: 0; animation: fadeUp 0.7s 0.2s forwards;
+}
+.hero-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: clamp(90px, 13vw, 180px);
+  line-height: 0.88; text-transform: uppercase;
+  opacity: 0; animation: fadeUp 0.8s 0.35s forwards;
+}
+.hero-title .line2 {
+  font-style: italic;
+  -webkit-text-stroke: 2px var(--blue2);
+  color: transparent; display: block;
+}
+.hero-pills {
+  display: flex; gap: 12px; margin-top: 28px; flex-wrap: wrap;
+  opacity: 0; animation: fadeUp 0.8s 0.5s forwards;
+}
+.pill {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--blue2); border: 1px solid rgba(42,143,255,0.3);
+  padding: 7px 16px; background: rgba(26,110,245,0.07);
+}
+.hero-desc {
+  margin-top: 36px; font-size: 17px; line-height: 1.8;
+  color: var(--dim); font-weight: 300; max-width: 480px;
+  opacity: 0; animation: fadeUp 0.8s 0.65s forwards;
+}
+.hero-cta {
+  display: flex; gap: 16px; margin-top: 48px;
+  opacity: 0; animation: fadeUp 0.8s 0.8s forwards;
+}
+.btn-blue {
+  background: var(--blue); color: #fff;
+  font-family: 'Space Mono', monospace;
+  font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase;
+  padding: 17px 36px; border: none; cursor: pointer;
+  text-decoration: none; display: inline-block;
+  transition: background 0.2s, transform 0.2s;
+}
+.btn-blue:hover { background: var(--blue2); transform: translateY(-3px); }
+.btn-outline {
+  background: transparent; color: var(--dim);
+  font-family: 'Space Mono', monospace;
+  font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase;
+  padding: 17px 36px; border: 1px solid rgba(232,240,255,0.15);
+  cursor: pointer; text-decoration: none; display: inline-block;
+  transition: border-color 0.2s, color 0.2s, transform 0.2s;
+}
+.btn-outline:hover { border-color: var(--blue2); color: var(--white); transform: translateY(-3px); }
+
+/* Hero visual */
+.hero-visual {
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; animation: fadeIn 1.2s 0.6s forwards;
+}
+.logo-ring {
+  width: 440px; height: 440px; border-radius: 50%;
+  border: 1px solid rgba(26,110,245,0.2);
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.logo-ring::before {
+  content: ''; position: absolute; inset: -24px; border-radius: 50%;
+  border: 1px solid rgba(26,110,245,0.07);
+}
+.logo-ring::after {
+  content: ''; position: absolute; inset: -48px; border-radius: 50%;
+  border: 1px solid rgba(26,110,245,0.04);
+}
+.logo-img {
+  width: 360px; height: 360px; border-radius: 50%; object-fit: cover;
+  filter: drop-shadow(0 0 60px rgba(26,110,245,0.5)) drop-shadow(0 0 20px rgba(0,200,255,0.3));
+  animation: float 5s ease-in-out infinite;
+}
+.orbit-dot {
+  position: absolute; width: 10px; height: 10px;
+  border-radius: 50%; background: var(--cyan);
+  box-shadow: 0 0 12px var(--cyan);
+  top: 12px; left: 50%;
+  animation: orbit 8s linear infinite;
+}
+
+/* MARQUEE */
+.strip {
+  background: var(--blue); padding: 18px 0;
+  overflow: hidden; white-space: nowrap; position: relative; z-index: 5;
+}
+.strip-track { display: inline-block; animation: marquee 20s linear infinite; }
+.strip-item {
+  display: inline-block;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-style: italic;
+  font-size: 18px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: rgba(255,255,255,0.9); margin: 0 32px;
+}
+.strip-sep { color: var(--cyan); margin: 0 8px; vertical-align: middle; display: inline-block; }
+
+/* STORY */
+.story-wrap { padding: 140px 64px; }
+.story {
+  max-width: 1300px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 100px;
+  align-items: center;
+}
+.story-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: 0.3em;
+  text-transform: uppercase; color: var(--cyan); margin-bottom: 24px;
+}
+.story-text h2 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-style: italic;
+  font-size: clamp(48px, 5vw, 78px);
+  text-transform: uppercase; line-height: 0.95; margin-bottom: 40px;
+}
+.story-text h2 .accent { color: var(--cyan); }
+.story-text h2 .outline {
+  -webkit-text-stroke: 1px rgba(232,240,255,0.35);
+  color: transparent; display: block;
+}
+.story-text p {
+  font-size: 16px; line-height: 1.9; color: var(--dim);
+  font-weight: 300; margin-bottom: 24px;
+}
+.story-text p strong { color: var(--white); font-weight: 500; }
+.shout {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-style: italic;
+  font-size: clamp(52px, 7vw, 100px);
+  text-transform: uppercase; line-height: 1; margin: 16px 0 32px;
+  background: linear-gradient(135deg, var(--blue2), var(--cyan));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; display: inline-block;
+  filter: drop-shadow(0 0 30px rgba(0,200,255,0.2));
+}
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+.stat-box {
+  background: var(--navy3); border: 1px solid rgba(26,110,245,0.1);
+  padding: 36px 28px; transition: border-color 0.3s, background 0.3s; cursor: default;
+}
+.stat-box:hover { border-color: rgba(26,110,245,0.4); background: rgba(26,110,245,0.06); }
+.stat-num {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-style: italic;
+  font-size: 52px; line-height: 1; color: var(--blue2); margin-bottom: 8px;
+}
+.stat-num.cyan { color: var(--cyan); }
+.stat-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--dimmer);
+}
+
+/* PILLARS */
+.pillars {
+  padding: 120px 64px; background: var(--navy2);
+  position: relative; overflow: hidden;
+}
+.pillars::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(to right, transparent, var(--blue), transparent);
+}
+.pillars-inner { max-width: 1300px; margin: 0 auto; }
+.section-header {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  margin-bottom: 72px;
+}
+.section-header h2 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-style: italic;
+  font-size: clamp(40px, 5vw, 68px); text-transform: uppercase; line-height: 0.95;
+}
+.section-header h2 .accent { color: var(--cyan); }
+.section-header p { font-size: 14px; color: var(--dimmer); max-width: 200px; text-align: right; line-height: 1.6; }
+.pillars-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 2px; }
+.pillar {
+  background: var(--navy3); border: 1px solid rgba(26,110,245,0.1);
+  padding: 48px 32px; position: relative; overflow: hidden;
+  transition: border-color 0.3s, transform 0.3s; cursor: default;
+}
+.pillar::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(to right, var(--blue), var(--cyan));
+  transform: scaleX(0); transform-origin: left; transition: transform 0.4s;
+}
+.pillar:hover { border-color: rgba(26,110,245,0.4); transform: translateY(-4px); }
+.pillar:hover::before { transform: scaleX(1); }
+.pillar-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: 0.2em; color: var(--blue2); margin-bottom: 20px;
+}
+.pillar-icon { font-size: 40px; margin-bottom: 24px; display: block; }
+.pillar h3 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-style: italic; font-size: 26px;
+  text-transform: uppercase; color: var(--white); margin-bottom: 16px;
+}
+.pillar p { font-size: 14px; line-height: 1.75; color: var(--dim); font-weight: 300; }
+
+/* QUOTE */
+.quote-section {
+  padding: 160px 64px; text-align: center; position: relative; overflow: hidden;
+}
+.quote-section::before {
+  content: '"';
+  position: absolute;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 600px; line-height: 1;
+  color: rgba(26,110,245,0.04);
+  top: -80px; left: 50%; transform: translateX(-50%);
+  pointer-events: none;
+}
+.quote-inner { max-width: 900px; margin: 0 auto; position: relative; z-index: 2; }
+.quote-inner blockquote {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-style: italic;
+  font-size: clamp(28px, 4vw, 52px); text-transform: uppercase;
+  line-height: 1.2; color: var(--white); margin-bottom: 48px;
+}
+.quote-inner blockquote .glow {
+  color: var(--cyan); text-shadow: 0 0 40px rgba(0,200,255,0.35);
+}
+.quote-attr {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px; letter-spacing: 0.25em;
+  text-transform: uppercase; color: var(--dimmer);
+  display: flex; align-items: center; justify-content: center; gap: 20px;
+}
+.quote-attr::before, .quote-attr::after {
+  content: ''; display: block; width: 80px; height: 1px;
+  background: linear-gradient(to right, transparent, var(--blue));
+}
+.quote-attr::after { background: linear-gradient(to left, transparent, var(--blue)); }
+
+/* JOIN */
+.join {
+  padding: 160px 64px; background: var(--navy2);
+  position: relative; overflow: hidden;
+}
+.join::after {
+  content: ''; position: absolute; top: -200px; right: -200px;
+  width: 700px; height: 700px; border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(26,110,245,0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+.join-inner {
+  max-width: 1300px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 100px;
+  align-items: center; position: relative; z-index: 2;
+}
+.join-text h2 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-style: italic;
+  font-size: clamp(48px, 5.5vw, 84px); text-transform: uppercase;
+  line-height: 0.92; margin-bottom: 32px;
+}
+.join-text h2 .accent { color: var(--cyan); }
+.join-text p { font-size: 16px; line-height: 1.8; color: var(--dim); font-weight: 300; margin-bottom: 40px; }
+.join-perks { display: flex; flex-direction: column; gap: 12px; }
+.perk { display: flex; align-items: center; gap: 14px; font-size: 14px; color: var(--dim); }
+.perk::before {
+  content: ''; display: block; width: 20px; height: 1px;
+  background: var(--blue2); flex-shrink: 0;
+}
+.join-form { display: flex; flex-direction: column; gap: 12px; }
+.join-form input {
+  background: rgba(26,110,245,0.06); border: 1px solid rgba(26,110,245,0.2);
+  color: var(--white); font-family: 'Barlow', sans-serif;
+  font-size: 15px; padding: 18px 22px; outline: none; transition: border-color 0.2s;
+}
+.join-form input::placeholder { color: rgba(232,240,255,0.2); }
+.join-form input:focus { border-color: var(--blue2); }
+.join-form button {
+  background: linear-gradient(135deg, var(--blue), var(--blue2));
+  color: #fff;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-style: italic;
+  font-size: 22px; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 22px; border: none; cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s; margin-top: 8px;
+}
+.join-form button:hover { opacity: 0.88; transform: translateY(-2px); }
+
+/* FOOTER */
+footer {
+  background: var(--navy);
+  border-top: 1px solid rgba(26,110,245,0.1);
+  padding: 48px 64px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.footer-logo {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 36px;
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+.footer-logo span { color: var(--cyan); }
+.footer-sub {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--dimmer); margin-top: 4px;
+}
+.footer-copy {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: 0.1em;
+  color: var(--dimmer); text-transform: uppercase;
+}
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-14px); }
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%       { transform: scale(1.15); opacity: 0.7; }
+}
+@keyframes orbit {
+  from { transform: rotate(0deg) translateX(205px) rotate(0deg); }
+  to   { transform: rotate(360deg) translateX(205px) rotate(-360deg); }
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  nav { padding: 20px 32px; }
+  .hero { padding: 120px 32px 80px; }
+  .hero-inner { grid-template-columns: 1fr; }
+  .hero-visual { display: none; }
+  .story-wrap { padding: 80px 32px; }
+  .story { grid-template-columns: 1fr; gap: 60px; }
+  .pillars { padding: 80px 32px; }
+  .pillars-grid { grid-template-columns: 1fr 1fr; }
+  .section-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .section-header p { text-align: left; }
+  .quote-section { padding: 80px 32px; }
+  .join { padding: 80px 32px; }
+  .join-inner { grid-template-columns: 1fr; gap: 60px; }
+  footer { flex-direction: column; gap: 20px; text-align: center; padding: 32px; }
+}
+@media (max-width: 600px) {
+  .pillars-grid { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+  .hero-cta { flex-direction: column; }
+  .stat-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Sho<span>opa</span></div>
+  <ul class="nav-links">
+    <li><a href="#story">Our Story</a></li>
+    <li><a href="#pillars">Programs</a></li>
+    <li><a href="#join">Join</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-eyebrow">Jeddah · Women Only · Est. 2025</div>
+      <div class="hero-title">SHO<span class="line2">OPA</span></div>
+      <div class="hero-pills">
+        <span class="pill">Jiu-Jitsu</span>
+        <span class="pill">Chess</span>
+        <span class="pill">Mind &amp; Body</span>
+      </div>
+      <p class="hero-desc">
+        A second home for girls who want to train harder, think deeper, and grow into women who can never be stopped.
+      </p>
+      <div class="hero-cta">
+        <a href="#join" class="btn-blue">Find Your Home</a>
+        <a href="#story" class="btn-outline">Our Story</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="logo-ring">
+        <div class="orbit-dot"></div>
+        <img src="/mnt/user-data/uploads/ChatGPT_Image_Mar_5__2026__04_01_06_AM.png" class="logo-img" alt="SHOOPA Logo"/>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="strip">
+  <div class="strip-track">
+    <span class="strip-item">Train Hard</span><span class="strip-sep">✦</span>
+    <span class="strip-item">Think Deep</span><span class="strip-sep">✦</span>
+    <span class="strip-item">Roll With It</span><span class="strip-sep">✦</span>
+    <span class="strip-item">Read Widely</span><span class="strip-sep">✦</span>
+    <span class="strip-item">Bloom Loudly</span><span class="strip-sep">✦</span>
+    <span class="strip-item">SHOOPA</span><span class="strip-sep">✦</span>
+    <span class="strip-item">Train Hard</span><span class="strip-sep">✦</span>
+    <span class="strip-item">Think Deep</span><span class="strip-sep">✦</span>
+    <span class="strip-item">Roll With It</span><span class="strip-sep">✦</span>
+    <span class="strip-item">Read Widely</span><span class="strip-sep">✦</span>
+    <span class="strip-item">Bloom Loudly</span><span class="strip-sep">✦</span>
+    <span class="strip-item">SHOOPA</span><span class="strip-sep">✦</span>
+  </div>
+</div>
+
+<!-- STORY -->
+<section id="story" class="story-wrap">
+  <div class="story">
+    <div class="story-text">
+      <div class="story-label">The Origin Story</div>
+      <h2>She kept<br/><span class="accent">showing</span><br/><span class="outline">up.</span></h2>
+      <p>Jana has always moved differently. <strong>Meal prepping, lifting, training</strong> — pushing everyone around her to take care of themselves, even while carrying her family on her back.</p>
+      <p>A year and a half ago she stepped onto the mats. Jiu-jitsu didn't just become a hobby — it became her identity. She went <strong>almost every single day</strong>, earned her blue belt, and became someone her whole circle looked up to.</p>
+      <p>Then she put on her gi for the first time, looked into the camera, and said the word that started it all:</p>
+      <div class="shout">"SHOOPA!"</div>
+      <p>Now she's building the place she always needed: where girls come to <strong>fight, think, read, and grow</strong> — together.</p>
+    </div>
+    <div>
+      <div class="stat-grid">
+        <div class="stat-box">
+          <div class="stat-num">1.5</div>
+          <div class="stat-label">Years on the mats</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num cyan">🥋</div>
+          <div class="stat-label">Blue Belt earned</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num cyan">4</div>
+          <div class="stat-label">Pillars of growth</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">∞</div>
+          <div class="stat-label">Girls who will bloom</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PILLARS -->
+<section class="pillars" id="pillars">
+  <div class="pillars-inner">
+    <div class="section-header">
+      <h2>Four pillars.<br/><span class="accent">One home.</span></h2>
+      <p>Everything Jana believed in, built into one place.</p>
+    </div>
+    <div class="pillars-grid">
+      <div class="pillar">
+        <span class="pillar-icon">🥋</span>
+        <div class="pillar-num">01 / Fight</div>
+        <h3>Jiu-Jitsu</h3>
+        <p>Learn to defend yourself, trust your body, and discover a strength you never knew you had. On the mats, every girl is equal.</p>
+      </div>
+      <div class="pillar">
+        <span class="pillar-icon">♟️</span>
+        <div class="pillar-num">02 / Think</div>
+        <h3>Chess</h3>
+        <p>Patience. Strategy. Calculated courage. Training your mind is just as important as training your body.</p>
+      </div>
+      <div class="pillar">
+        <span class="pillar-icon">📖</span>
+        <div class="pillar-num">03 / Learn</div>
+        <h3>Reading</h3>
+        <p>A curated library where you sit, breathe, and let stories reshape who you are. Every great woman has a book in her hand.</p>
+      </div>
+      <div class="pillar">
+        <span class="pillar-icon">🌿</span>
+        <div class="pillar-num">04 / Nourish</div>
+        <h3>Wellness</h3>
+        <p>Meal prep workshops, nutrition guidance, and a community that holds you accountable — gently, lovingly, and fiercely.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUOTE -->
+<section class="quote-section">
+  <div class="quote-inner">
+    <blockquote>
+      "Despite everything pulling her back,<br/>
+      she kept showing up.<br/>
+      <span class="glow">SHOOPA is for every girl<br/>who keeps showing up.</span>"
+    </blockquote>
+    <div class="quote-attr">Jana &amp; Co-Founder</div>
+  </div>
+</section>
+
+<!-- JOIN -->
+<section class="join" id="join">
+  <div class="join-inner">
+    <div class="join-text">
+      <h2>Be among<br/>the <span class="accent">first</span><br/>to bloom.</h2>
+      <p>SHOOPA opens its doors soon. Leave your name — girls who find their home early, grow the fastest.</p>
+      <div class="join-perks">
+        <div class="perk">Early access &amp; founding member pricing</div>
+        <div class="perk">First jiu-jitsu class on us</div>
+        <div class="perk">Priority waitlist for all programs</div>
+        <div class="perk">Women-only, always</div>
+      </div>
+    </div>
+    <div class="join-form">
+      <input type="text" placeholder="Your name"/>
+      <input type="email" placeholder="Your email"/>
+      <input type="tel" placeholder="WhatsApp number (optional)"/>
+      <button type="button">I'm Ready to SHOOPA →</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-logo">Sho<span>opa</span></div>
+    <div class="footer-sub">Jiu-Jitsu · Chess · Mind &amp; Body</div>
+  </div>
+  <div class="footer-copy">Jeddah · A place for girls to bloom · 2025</div>
+</footer>
+
+</body>
+</html>
